@@ -12,7 +12,9 @@ import androidx.recyclerview.widget.RecyclerView
 import com.jakewharton.retrofit2.converter.kotlinx.serialization.asConverterFactory
 import io.reactivex.Observable
 import io.reactivex.Single
+import io.reactivex.Single.just
 import io.reactivex.disposables.CompositeDisposable
+import io.reactivex.disposables.Disposable
 import kotlinx.android.synthetic.main.activity_main.*
 import kotlinx.serialization.json.Json
 import okhttp3.MediaType
@@ -24,18 +26,18 @@ import io.reactivex.rxkotlin.subscribeBy
 import io.reactivex.schedulers.Schedulers
 
 
-interface JokeApiService{
+interface JokeApiService {
     @GET("jokes/random")
-    fun giveMeAJoke() : Single<Joke>
+    fun giveMeAJoke(): Single<Joke>
 }
 
-object JokeApiServiceFactory{
-    fun jokeService() : JokeApiService {
+object JokeApiServiceFactory {
+    fun jokeService(): JokeApiService {
         val builder = Retrofit.Builder()
-                        .addCallAdapterFactory(RxJava2CallAdapterFactory.create())
-                        .addConverterFactory(Json.asConverterFactory(MediaType.get("application/json")))
-                        .baseUrl("https://api.chucknorris.io/")
-                        .build()
+            .addCallAdapterFactory(RxJava2CallAdapterFactory.create())
+            .addConverterFactory(Json.asConverterFactory(MediaType.get("application/json")))
+            .baseUrl("https://api.chucknorris.io/")
+            .build()
 
         return builder.create(JokeApiService::class.java)
     }
@@ -44,37 +46,35 @@ object JokeApiServiceFactory{
 
 class MainActivity : AppCompatActivity() {
     private var compo = CompositeDisposable()
+
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         setContentView(R.layout.activity_main)
 
-        // Display the list in the logcat
-        Log.d("list", jokes.joke_list.toString())
+        val adapter = JokeAdapter(mutableListOf())
 
-        val list = jokes.joke_list.map{Joke(categories = listOf(""),
-                                            createdAt = "",
-                                            iconUrl = "https://assets.chucknorris.host/img/avatar/chuck-norris.png",
-                                            id = "",
-                                            updatedAt = "",
-                                            url = "",
-                                            value = it)}
+        val jokeServ = JokeApiServiceFactory.jokeService()
+        val joke: Single<Joke> = jokeServ.giveMeAJoke() // Get a joke
 
-        val recycler = findViewById(R.id.recycler) as RecyclerView
-        recycler.layoutManager = LinearLayoutManager(this)
-        recycler.adapter = JokeAdapter(list)
+        val dispo: Disposable = joke.subscribeOn(Schedulers.io())
+            .subscribeBy(
+                onError = { println("ERROR") },
+                onSuccess = {
+                    println("YEEEEAAAAAAAHHHH")
+                    adapter.addJoke(it)
+                })
 
-        val joke_serv = JokeApiServiceFactory.jokeService()
-        val joke: Single<Joke> = joke_serv.giveMeAJoke()
-        val dispo = joke.subscribeOn(Schedulers.io()).subscribeBy(onError = {println("ERROR")}, onSuccess = {println("SASUGA AINZ SAMA")})
         compo.add(dispo)
-    }
-    // Notifies the JokeAdapter that data has changed
-    fun setJokes( pJokes : List<String>){
-        jokes.joke_list = pJokes
-        recycler.adapter!!.notifyDataSetChanged()
+
+
+        //Log.i("Joke : ", adapter.jokes[0].value)
+
+        val recycler: RecyclerView = findViewById(R.id.recycler)
+        recycler.layoutManager = LinearLayoutManager(this)
+        recycler.adapter = adapter
     }
 
-    override fun onDestroy(){
+    override fun onDestroy() {
         super.onDestroy()
         compo.clear()
     }

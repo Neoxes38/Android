@@ -6,7 +6,7 @@ import androidx.recyclerview.widget.RecyclerView
 import android.view.LayoutInflater
 import android.view.View
 
-class JokeAdapter(var jokes : List<Joke>) : RecyclerView.Adapter<JokeAdapter.JokeViewHolder>() {
+class JokeAdapter(var jokes : MutableList<Joke>) : RecyclerView.Adapter<JokeAdapter.JokeViewHolder>() {
 
     class JokeViewHolder(val jokes_view : TextView) : RecyclerView.ViewHolder(jokes_view)
 
@@ -25,4 +25,8 @@ class JokeAdapter(var jokes : List<Joke>) : RecyclerView.Adapter<JokeAdapter.Jok
             return jokes.size
         }
 
+    fun addJoke(joke : Joke){
+        this.jokes.add(joke)
+        this.notifyDataSetChanged()
+    }
 }
