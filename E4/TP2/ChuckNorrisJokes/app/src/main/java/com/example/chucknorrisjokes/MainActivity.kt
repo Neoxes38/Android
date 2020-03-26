@@ -48,52 +48,38 @@ class MainActivity : AppCompatActivity() {
         super.onCreate(savedInstanceState)
         setContentView(R.layout.activity_main)
 
-        val buttonNew: Button = findViewById(R.id.button_new) // We get the Button
         val pBar: ProgressBar = findViewById(R.id.pBar) // We get the ProgressBar
 
-        val adapter = JokeAdapter(mutableListOf()) // Adapter with a list of jokes
+        val adapter = JokeAdapter(mutableListOf()){
+            val pBar: ProgressBar = findViewById(R.id.pBar) // We get the ProgressBar
 
-        val jokeServ = JokeApiServiceFactory.jokeService()
-        val joke: Single<Joke> = jokeServ.giveMeAJoke()
+            val jokeServ = JokeApiServiceFactory.jokeService()
+            val joke: Single<Joke> = jokeServ.giveMeAJoke()
 
-        val dispo: Disposable = joke.subscribeOn(Schedulers.io())
-            .observeOn(AndroidSchedulers.mainThread())
-            .subscribeBy(
-                onError = { println("ERROR") },
-                onSuccess = {
-                    println("YEEEEAAAAAAAHHHH")
-                    adapter.addJoke(it) // Add the joke to the adapter
-                })
-
-        compo.add(dispo)
+            val dispos: Disposable = joke
+                .delay(1000, TimeUnit.MILLISECONDS)
+                .repeat(10)
+                .subscribeOn(Schedulers.io())
+                .observeOn(AndroidSchedulers.mainThread())
+                .doOnSubscribe{pBar.visibility = VISIBLE}
+                .doOnTerminate{pBar.visibility = GONE}
+                .subscribeBy(
+                    onError = { println("ERROR") },
+                    onNext = { j: Joke ->
+                        println("YEEEEAAAAAAAHHHH")
+                        it.addJoke(j)
+                    })
+            compo.add(dispos)
+            Unit
+        }
 
         val recycler: RecyclerView = findViewById(R.id.recycler) // We get the RecyclerView
         recycler.layoutManager = LinearLayoutManager(this)
         recycler.adapter = adapter
 
-
-
-        // Set on-click listener
-        buttonNew.setOnClickListener(object : OnClickListener{
-            // Do things when we click on buttonNew
-            override fun onClick(v: View?) {
-
-                val dispos: Disposable = joke
-                    .delay(1000, TimeUnit.MILLISECONDS)
-                    .repeat(10)
-                    .subscribeOn(Schedulers.io())
-                    .observeOn(AndroidSchedulers.mainThread())
-                    .doOnSubscribe{pBar.visibility = VISIBLE}
-                    .doOnTerminate{pBar.visibility = GONE}
-                    .subscribeBy(
-                        onError = { println("ERROR") },
-                        onNext = {
-                            println("YEEEEAAAAAAAHHHH")
-                            adapter.addJoke(it)
-                        })
-                compo.add(dispos)
-            }
-        })
+        adapter.onBottomReached(adapter)
+        Thread.sleep(1000)
+        adapter.onBottomReached(adapter)
     }
 
 

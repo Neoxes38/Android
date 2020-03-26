@@ -5,7 +5,7 @@ import android.widget.TextView
 import androidx.recyclerview.widget.RecyclerView
 import android.view.LayoutInflater
 
-class JokeAdapter(var jokes : MutableList<Joke>) : RecyclerView.Adapter<JokeAdapter.JokeViewHolder>() {
+class JokeAdapter(var jokes : MutableList<Joke>, val onBottomReached: (JokeAdapter) -> Unit?) : RecyclerView.Adapter<JokeAdapter.JokeViewHolder>() {
 
     class JokeViewHolder(val jokes_view : TextView) : RecyclerView.ViewHolder(jokes_view)
 
