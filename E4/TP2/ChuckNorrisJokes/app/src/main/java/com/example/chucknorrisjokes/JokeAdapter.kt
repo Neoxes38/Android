@@ -4,7 +4,6 @@ import android.view.ViewGroup
 import android.widget.TextView
 import androidx.recyclerview.widget.RecyclerView
 import android.view.LayoutInflater
-import android.view.View
 
 class JokeAdapter(var jokes : MutableList<Joke>) : RecyclerView.Adapter<JokeAdapter.JokeViewHolder>() {
 
