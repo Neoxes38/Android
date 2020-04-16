@@ -1,9 +1,9 @@
 package com.example.chucknorrisjokes
 
+import android.view.LayoutInflater
 import android.view.ViewGroup
 import android.widget.TextView
 import androidx.recyclerview.widget.RecyclerView
-import android.view.LayoutInflater
 
 class JokeAdapter(var jokes : MutableList<Joke>, val onBottomReached: (JokeAdapter) -> Unit?) : RecyclerView.Adapter<JokeAdapter.JokeViewHolder>() {
 
@@ -11,7 +11,7 @@ class JokeAdapter(var jokes : MutableList<Joke>, val onBottomReached: (JokeAdapt
 
         override fun onCreateViewHolder(parent: ViewGroup, viewType: Int): JokeViewHolder {
             // Inflate the layout using LayoutInflater
-            val textView = LayoutInflater.from(parent.context).inflate(R.layout.joke_layout, parent, false) as TextView
+            val textView = LayoutInflater.from(parent.context).inflate(R.layout.joke_layout, parent,false) as TextView
 
             return JokeViewHolder(textView)
         }
