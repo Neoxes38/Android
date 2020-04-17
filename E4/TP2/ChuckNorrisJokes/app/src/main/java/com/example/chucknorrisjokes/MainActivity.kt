@@ -42,7 +42,7 @@ object JokeApiServiceFactory {
 }
 
 
-class MainActivity : AppCompatActivity() {
+class MainActivity: AppCompatActivity() {
     private var compo = CompositeDisposable()
     private var loading = false
     private var adapter = JokeAdapter(mutableListOf()){
