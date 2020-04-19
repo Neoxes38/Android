@@ -5,11 +5,11 @@
 Ce projet consiste à développer une application Android qui affichera des blagues sur Chuck Norris.
 Les différentes spécificités de cette application doivent être les suivantes :
 
-*Récupération de blagues sur un site internet qui génère des blagues sur Chuck Norris (https://api.chucknorris.io/)
-*Affichage de ces blagues
-*Présence de 2 boutons permettant de partager une blague ou de l'ajouter à ses favoris
-*Lorsque l'on scroll en bas de la liste de blagues, de nouvelles sont récupérées et affichées
-*Le statut de l'application n'est pas dérangé lorsque l'on tourne l'écran
+* Récupération de blagues sur un site internet qui génère des blagues sur Chuck Norris (https://api.chucknorris.io/)
+* Affichage de ces blagues
+* Présence de 2 boutons permettant de partager une blague ou de l'ajouter à ses favoris
+* Lorsque l'on scroll en bas de la liste de blagues, de nouvelles sont récupérées et affichées
+* Le statut de l'application n'est pas dérangé lorsque l'on tourne l'écran
 
 
 ### Part 1 - Create a UI List component 
