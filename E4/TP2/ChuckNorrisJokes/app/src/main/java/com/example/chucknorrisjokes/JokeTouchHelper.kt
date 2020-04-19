@@ -4,17 +4,16 @@ import androidx.recyclerview.widget.ItemTouchHelper
 import androidx.recyclerview.widget.RecyclerView
 
 class JokeTouchHelper(private val onJokeRemoved: (position: Int) -> Unit, private val onItemMoved:(ini: Int, final : Int) -> Unit ):
-    ItemTouchHelper(object: ItemTouchHelper.SimpleCallback(UP or DOWN,LEFT or RIGHT)
+    ItemTouchHelper(object: ItemTouchHelper.SimpleCallback(UP or DOWN, RIGHT)
     {
-
         override fun onMove(recyclerView: RecyclerView, viewHolder: RecyclerView.ViewHolder, target: RecyclerView.ViewHolder): Boolean
         {
-            val initial_pos = viewHolder.adapterPosition
-            val target_pos = target.adapterPosition
-            onItemMoved(initial_pos, target_pos)
+            val initialPos = viewHolder.adapterPosition
+            val targetPos = target.adapterPosition
+            onItemMoved(initialPos, targetPos)
 
             return true
-        }// TODO("use it to reorder items")
+        }
 
 
 
@@ -22,7 +21,7 @@ class JokeTouchHelper(private val onJokeRemoved: (position: Int) -> Unit, privat
         {
             val pos = viewHolder.adapterPosition
             onJokeRemoved(pos)
-        }//TODO("use it to delete items")
+        }
 
     }
 

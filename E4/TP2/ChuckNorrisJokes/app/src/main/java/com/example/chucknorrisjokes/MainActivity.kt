@@ -32,9 +32,9 @@ interface JokeApiService {
 object JokeApiServiceFactory {
     fun jokeService(): JokeApiService {
         val builder = Retrofit.Builder()
-            .addCallAdapterFactory(RxJava2CallAdapterFactory.create())
-            .addConverterFactory(Json.asConverterFactory(MediaType.get("application/json")))
             .baseUrl("https://api.chucknorris.io/")
+            .addConverterFactory(Json.asConverterFactory(MediaType.get("application/json")))
+            .addCallAdapterFactory(RxJava2CallAdapterFactory.create())
             .build()
 
         return builder.create(JokeApiService::class.java)
@@ -49,10 +49,10 @@ class MainActivity: AppCompatActivity() {
         this.loading = false
         val pBar: ProgressBar = findViewById(R.id.pBar) // We get the ProgressBar
 
-        val jokeServ = JokeApiServiceFactory.jokeService()
-        val joke: Single<Joke> = jokeServ.giveMeAJoke()
+        val jokeService = JokeApiServiceFactory.jokeService()
+        val joke: Single<Joke> = jokeService.giveMeAJoke()
 
-        val dispos: Disposable = joke
+        val disposable: Disposable = joke
             .delay(100, TimeUnit.MILLISECONDS)
             .repeat(10)
             .subscribeOn(Schedulers.io())
@@ -65,9 +65,10 @@ class MainActivity: AppCompatActivity() {
                 onNext = { j: Joke ->
                     it.addJoke(j)
                 })
-        compo.add(dispos)
+        compo.add(disposable)
         Unit
     }
+    private val itemHelper = JokeTouchHelper(adapter::onJokeRemoved, adapter::onItemMoved)
 
     override fun onCreate(savedInstanceState: Bundle?) {
 
@@ -80,6 +81,7 @@ class MainActivity: AppCompatActivity() {
         val recycler: RecyclerView = findViewById(R.id.recycler) // We get the RecyclerView
         recycler.layoutManager = LinearLayoutManager(this)
         recycler.adapter = adapter
+        itemHelper.attachToRecyclerView(recycler)
 
         recycler.viewTreeObserver.addOnScrollChangedListener(OnScrollChangedListener {
             if (!recycler.canScrollVertically(1) && !this.loading) {
@@ -100,8 +102,8 @@ class MainActivity: AppCompatActivity() {
             this.loading = false
             val pBar: ProgressBar = findViewById(R.id.pBar) // We get the ProgressBar
 
-            val jokeServ = JokeApiServiceFactory.jokeService()
-            val joke: Single<Joke> = jokeServ.giveMeAJoke()
+            val jokeService = JokeApiServiceFactory.jokeService()
+            val joke: Single<Joke> = jokeService.giveMeAJoke()
 
             val dispos: Disposable = joke
                 .delay(100, TimeUnit.MILLISECONDS)

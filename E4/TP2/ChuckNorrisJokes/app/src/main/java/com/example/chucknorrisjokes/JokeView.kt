@@ -32,7 +32,7 @@ class JokeView @JvmOverloads constructor(context: Context) : ConstraintLayout(co
         var shareButton: ImageButton = findViewById(R.id.share_button)
         shareButton = model.shareButton
 
-        //Update fav button
+        // Update fav button
         var favButton: ImageButton = findViewById(R.id.fav_button)
         favButton = model.favButton
     }
